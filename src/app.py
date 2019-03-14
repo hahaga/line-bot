@@ -1,13 +1,54 @@
+import boto3
+import json
+import decimal
+import uuid
 from flask import Flask
+
 app = Flask(__name__)
+
+# Helper class to convert DynamoDB item to JSON
+# cuz like fuck dealing with it when it's not JSON
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            if abs(o) % 1 > 0:
+                return float(o)
+            else:
+                return int(o)
+            return super(DecimalEncoder, self).default(o)
+
+def createItem():
+    # Connect to database
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
+
+    # Connect to databse table
+    table = dynamodb.Table('FortuneCookie')
+
+    # Make JSON file of fortunes you want to add
+    # rawrawrawr stuff
+    id = str(uuid.uuid4())
+    fortune = "If you eat food, it will give you calories."
+    author = "Master Hong"
+
+    response = table.put_item(
+        Item={
+            #   NEVERMIND I DON'T NEED YOU
+            'id' : id,
+            'fortune' : fortune,
+            'author' : author
+        }
+    )
 
 @app.route("/")
 def home():
     return "Hello, World!"
 
+
 @app.route("/test")
 def test_endpoint():
+    createItem()
     return "This is only a test"
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port='8081')
+    #app.run(debug=True, host='0.0.0.0', port='8081')
+    createItem()
