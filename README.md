@@ -3,6 +3,8 @@ Line bot for our random features
 
 ## Instructions to get started:
 
+To get the project running, you will need to install these dependencies:
+
 Python Requirements: 
 * [Python 3.6+](https://www.python.org/downloads/)
 * pipenv
@@ -18,5 +20,3 @@ pipenv shell
 
 Node Requirements
 * [Node](https://nodejs.org/en/download/)
-
-To get the project running, you will need to install these dependencies:
