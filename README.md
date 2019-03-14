@@ -3,23 +3,20 @@ Line bot for our random features
 
 ## Instructions to get started:
 
-Requirements: 
-* Python 3.6+ 
+Python Requirements: 
+* [Python 3.6+](https://www.python.org/downloads/)
 * pipenv
-* Node
-
-To get the project running, you will need to install these dependencies:
-
-[Python 3.6+](https://www.python.org/downloads/)
 
 ## If you don't have pipenv, run this command
 ```
 pip install pipenv
 ```
 ## Run this command in the root of the project folder
+```
+pipenv shell
+```
 
-* pipenv shell
+Node Requirements
+* [Node](https://nodejs.org/en/download/)
 
-## Install Node
-
-[Node](https://nodejs.org/en/download/)
+To get the project running, you will need to install these dependencies:
