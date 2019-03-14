@@ -6,6 +6,10 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+<<<<<<< HEAD
+=======
+flask = "*"
+>>>>>>> master
 
 [requires]
 python_version = "3.6"
