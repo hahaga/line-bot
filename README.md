@@ -12,11 +12,11 @@ Python:
 * [Python 3.6+](https://www.python.org/downloads/)
 * pipenv
 
-If you don't have pipenv then run this command
+If you don't have pipenv then run this command:
 ```
 pip install pipenv
 ```
-Run this command in the root of the project folder
+Run this command in the root of the project folder:
 ```
 pipenv shell
 ```
