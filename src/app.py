@@ -1,15 +1,8 @@
-<<<<<<< HEAD
 import boto3
 import json
 import decimal
 import uuid
 from flask import Flask
-=======
-from flask import Flask, jsonify, request
-from flask_cors import CORS
-
-DEBUG = True
->>>>>>> master
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -84,9 +77,5 @@ def get_fortune():
 
 
 if __name__ == "__main__":
-<<<<<<< HEAD
     #app.run(debug=True, host='0.0.0.0', port='8081')
     createItem()
-=======
-    app.run(debug=True, port="8081")
->>>>>>> master
