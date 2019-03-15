@@ -73,14 +73,10 @@ h1 img {
 th:nth-child(1){
    width: 50%;
 }
-th:nth-child(2){
+th:nth-child(2), th:nth-child(2){
    width: 20%;
 }
 th:nth-child(3){
    width: 10%;
 }
-th:nth-child(4){
-   width: 20%;
-}
-
 </style>
