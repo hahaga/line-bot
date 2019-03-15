@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-sm-10">
         <h1>
-            <img src="../assets/fortune-cookie.png" style="display:inline;" alt="fortune cookie" height="42" width="42">
+            <img src="../assets/fortune-cookie.png" alt="fortune cookie" height="42" width="42">
             Fortunes
         </h1>
         <hr><br><br>
@@ -12,10 +12,10 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th scope="col" style="width: 50%">Fortune</th>
-              <th scope="col" style="width: 20%">Author</th>
-              <th scope="col" style="width: 10%">Reviewed?</th>
-              <th style="width: 20%"></th>
+              <th scope="col">Fortune</th>
+              <th scope="col">Author</th>
+              <th scope="col">Reviewed?</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -65,3 +65,18 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+h1 img {
+  display:inline;
+}
+th:nth-child(1){
+   width: 50%;
+}
+th:nth-child(2), th:nth-child(2){
+   width: 20%;
+}
+th:nth-child(3){
+   width: 10%;
+}
+</style>
