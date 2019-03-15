@@ -55,4 +55,4 @@ class Bot(BaseBot):
            "raw_data": <unmodified data itself webhook received>
         }
         """
-        self.send_message('Echo: {} and Dustin is awesome'.format(event['content']))
+        self.send_message('Echo: {}'.format(event['content']))
