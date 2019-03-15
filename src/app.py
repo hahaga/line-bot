@@ -3,6 +3,9 @@ import json
 import decimal
 import uuid
 from flask import Flask
+from flask_cors import CORS
+from boto3.dynamodb.conditions import Key, Attr
+from botocore.exceptions import ClientError
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -24,21 +27,21 @@ def createItem():
     # Connect to database
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
-    # Connect to databse table
+    # Access database table
     table = dynamodb.Table('FortuneCookie')
 
     # Make JSON file of fortunes you want to add
     # rawrawrawr stuff
     id = str(uuid.uuid4())
-    fortune = "If you eat food, it will give you calories."
-    author = "Master Hong"
+    # fortune = "If you eat food, it will give you calories."
+    # author = "Master Hong"
 
     response = table.put_item(
         Item={
-            #   NEVERMIND I DON'T NEED YOU
             'id' : id,
-            'fortune' : fortune,
-            'author' : author
+            "fortune": "Your high-minded principles spell success.",
+            "author": "Random Fool",
+            "approved": True
         }
     )
 
@@ -53,6 +56,7 @@ def test_endpoint():
     return "This is only a test"
 
 
+# Test fortunes
 FORTUNES = [
     {
         "id": 0,
@@ -69,13 +73,36 @@ FORTUNES = [
 ]
 
 
-@app.route("/fortune", methods=["GET"])
-def get_fortune():
-    response_obj = {"status": "success"}
-    response_obj['fortunes'] = FORTUNES
-    return jsonify(response_obj)
+#@app.route("/fortune", methods=["GET"])
+
+def get_all_fortunes():
+    # connect to the database
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
+
+    # Access database table
+    table = dynamodb.Table('FortuneCookie')
+
+    fortune = "Your high-minded principles spell success."
+
+    #response_obj = {"status": "success"}
+    try:
+        response_obj = table.scan()
+    except ClientError as e:
+        print("Failed...")
+        print(e.response['Error']['Message'])
+    else:
+        items = response_obj['Items']
+        return items
+        # testing prints
+        #print("GetItem succeeded: ")
+        #print(json.dumps(item, indent=4, cls=DecimalEncoder))
+    #return jsonify(response_obj) this is for Dustin
+
 
 
 if __name__ == "__main__":
     #app.run(debug=True, host='0.0.0.0', port='8081')
-    createItem()
+
+    # testing the methods
+    # createItem()
+    get_all_fortunes()
