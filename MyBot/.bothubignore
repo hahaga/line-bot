@@ -1,4 +1,3 @@
-.bothub-meta
 dist
 *.pyc
 *__pycache__*
