@@ -3,6 +3,8 @@ import json
 import decimal
 import uuid
 import random
+import sys
+from loguru import logger
 from flask import Flask, jsonify
 from flask_cors import CORS
 from boto3.dynamodb.conditions import Key, Attr
@@ -12,6 +14,9 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 CORS(app)
+logger.add(sys.stderr, format="{time} {level} {message}", filter="my_module", level="INFO")
+logger.add("debug.log")
+
 
 # Helper class to convert DynamoDB item to JSON
 # cuz like fuck dealing with it when it's not JSON
@@ -53,7 +58,7 @@ def home():
 
 @app.route("/test")
 def test_endpoint():
-    createItem()
+    
     return "This is only a test"
 
 
@@ -73,6 +78,7 @@ FORTUNES = [
     },
 ]
 
+# Helper function
 def get_all_fortunes():
     # connect to the database
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
@@ -92,6 +98,7 @@ def get_all_fortunes():
         #print("GetItem succeeded: ")
         #print(json.dumps(item, indent=4, cls=DecimalEncoder))
 
+
 @app.route("/fortune", methods=["GET"])
 def get_fortune():
     fortunes = get_all_fortunes()
@@ -105,13 +112,17 @@ def get_fortune():
         "status": "success" 
     }
 
+    logger.debug(json.dumps(response_obj, indent=4))
     return jsonify(response_obj)
     
-
+@app.route("/fortune/all", methods=["GET"])
+def show_all():
+    fortunes = get_all_fortunes()
+    return jsonify(fortunes)
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port='8081')
 
     # testing the methods
     # createItem()
-    #get_fortune()
+    # get_fortune()
