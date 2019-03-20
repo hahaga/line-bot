@@ -2,7 +2,8 @@ import boto3
 import json
 import decimal
 import uuid
-from flask import Flask
+import random
+from flask import Flask, jsonify
 from flask_cors import CORS
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
@@ -72,9 +73,6 @@ FORTUNES = [
     },
 ]
 
-
-#@app.route("/fortune", methods=["GET"])
-
 def get_all_fortunes():
     # connect to the database
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
@@ -82,9 +80,6 @@ def get_all_fortunes():
     # Access database table
     table = dynamodb.Table('FortuneCookie')
 
-    fortune = "Your high-minded principles spell success."
-
-    #response_obj = {"status": "success"}
     try:
         response_obj = table.scan()
     except ClientError as e:
@@ -96,13 +91,44 @@ def get_all_fortunes():
         # testing prints
         #print("GetItem succeeded: ")
         #print(json.dumps(item, indent=4, cls=DecimalEncoder))
-    #return jsonify(response_obj) this is for Dustin
 
+@app.route("/fortune", methods=["GET"])
+def get_fortune():
+    fortunes = get_all_fortunes()
+
+    ##########
+    # BATTLE PLAN
+    # - Put fortunes in a hash table so that they have 0-n indeces
+    # - Random generate a number to pick a random fortune
+    # - Return fortune 
+    # 
+    # BABY STEPS
+    # x Print id of fortune (extract ids from list)
+    # - Put fortunes in a hashtable and print first fortune
+    # - Random generate a number and print fortune
+    ##########
+
+    chosen = random.randint(0, len(fortunes)-1)
+    #print(f"{chosen} {fortunes[chosen]['id']}")
+    print(fortunes[chosen])
+    
+    response_obj = {
+        "fortune" : fortunes[chosen],
+        "status": "success" 
+    }
+    print("got to here!")
+    return jsonify(response_obj)
+
+
+
+
+    #return jsonify(response_obj) this is for Dustin
+    
 
 
 if __name__ == "__main__":
-    #app.run(debug=True, host='0.0.0.0', port='8081')
+    app.run(debug=True, host='0.0.0.0', port='8081')
 
     # testing the methods
     # createItem()
-    get_all_fortunes()
+    #get_fortune()
