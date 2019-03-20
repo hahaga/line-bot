@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function, unicode_liter
 
 from bothub_client.bot import BaseBot
 from bothub_client.decorators import channel
+import requests
 
 class Bot(BaseBot):
     """Represent a Bot logic which interacts with a user.
@@ -55,4 +56,15 @@ class Bot(BaseBot):
            "raw_data": <unmodified data itself webhook received>
         }
         """
-        self.send_message('Echo: {}'.format(event['content']))
+        """
+        TO-DO: Connect to Fortune API and return fortune
+        """
+        # Get request from fortune API will store here
+        fortune = requests.get("http://api.open-notify.org/iss-now.json")
+        answer = fortune.text
+
+        # Will print fortune when it is stored
+
+        reply = '@Fortune Bot fortune!'
+        if event['content'] == reply:
+          self.send_message(answer)
