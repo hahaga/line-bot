@@ -96,33 +96,16 @@ def get_all_fortunes():
 def get_fortune():
     fortunes = get_all_fortunes()
 
-    ##########
-    # BATTLE PLAN
-    # - Put fortunes in a hash table so that they have 0-n indeces
-    # - Random generate a number to pick a random fortune
-    # - Return fortune 
-    # 
-    # BABY STEPS
-    # x Print id of fortune (extract ids from list)
-    # - Put fortunes in a hashtable and print first fortune
-    # - Random generate a number and print fortune
-    ##########
-
+    # Choose a random fortune
     chosen = random.randint(0, len(fortunes)-1)
-    #print(f"{chosen} {fortunes[chosen]['id']}")
     print(fortunes[chosen])
     
     response_obj = {
         "fortune" : fortunes[chosen],
         "status": "success" 
     }
-    print("got to here!")
+
     return jsonify(response_obj)
-
-
-
-
-    #return jsonify(response_obj) this is for Dustin
     
 
 
