@@ -58,9 +58,8 @@ def home():
 
 @app.route("/test")
 def test_endpoint():
-    
+    delete_fortune('69930aa4-d002-4a30-9c17-f97c0206602c')
     return "This is only a test"
-
 
 # Test fortunes
 FORTUNES = [
@@ -89,7 +88,6 @@ def get_all_fortunes():
     try:
         response_obj = table.scan()
     except ClientError as e:
-        print("Failed...")
         print(e.response['Error']['Message'])
     else:
         items = response_obj['Items']
@@ -98,7 +96,28 @@ def get_all_fortunes():
         #print("GetItem succeeded: ")
         #print(json.dumps(item, indent=4, cls=DecimalEncoder))
 
+def delete_fortune(id):
+    # connect to the database
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
+    # Access database table
+    table = dynamodb.Table('FortuneCookie')
+
+    try:
+        response = table.delete_item(
+            Key={
+                'id' : id
+            }
+        )
+    except ClientError as e:
+        if e.response['Error']['Code'] == "ConditionalCheckFailedException":
+            print(e.response['Error']['Message'])
+        else:
+            raise
+    else:
+        print("DeleteItem succeeded: ")
+        print(json.dumps(response, indent=4))
+    
 @app.route("/fortune", methods=["GET"])
 def get_fortune():
     fortunes = get_all_fortunes()
