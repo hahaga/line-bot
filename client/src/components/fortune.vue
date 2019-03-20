@@ -39,31 +39,31 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
 
 export default {
   name: 'Fortune',
-  data(){
+  data () {
     return {
-      fortunes: [],
-    };
+      fortunes: []
+    }
   },
   methods: {
-    getFortunes(){
-      const path="http://localhost:8081/fortune";
+    getFortunes () {
+      const path = 'http://localhost:8081/fortune'
       axios.get(path)
         .then((res) => {
-          this.fortunes = res.data.fortunes;
+          this.fortunes = res.data.fortunes
         })
         .catch((error) => {
-          console.log(error);
-        });
-    },      
+          console.log(error)
+        })
+    }
   },
-  created(){
-    this.getFortunes();
+  created () {
+    this.getFortunes()
   }
-};
+}
 </script>
 
 <style scoped>
