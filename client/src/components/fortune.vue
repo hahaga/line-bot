@@ -31,7 +31,7 @@
               </td>
               <td>
                 <button type="button" class="btn btn-info btn-sm" @click="approveFortune(fortune)">Approve</button>
-                <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                <button type="button" class="btn btn-danger btn-sm" @click="onDeleteFortune(fortune)">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -87,7 +87,9 @@ export default {
         title: '',
         author: '',
         approved: []
-      }
+      },
+      message: '',
+      showMessage: false
     }
   },
   methods: {
@@ -131,7 +133,7 @@ export default {
       this.addFortuneForm.read = []
     },
     onSubmit (evt) {
-      this.$log.debug('Submitting form')
+      this.$log.debug('Submitting Add Fortune form')
       evt.preventDefault()
       this.$refs.addFortuneModal.hide()
       const payload = {
@@ -145,6 +147,28 @@ export default {
       evt.preventDefault()
       this.$refs.addFortuneModal.hide()
       this.initForm()
+    },
+    removeFortune (fortuneID) {
+      this.$log.debug('Adding new fortune')
+      const path = `http://localhost:8081/fortune/${fortuneID}`
+      this.$log.debug('Calling url: ', path)
+      this.$log.debug('Calling DELETE /fortune/{id}')
+      axios.post(path)
+        .then(() => {
+          this.$log.debug('Delete Fortune!')
+          this.message = 'Fortune Removed!'
+          this.showMessage = true
+          this.$log.debug('Updating fortunes')
+          this.getFortunes()
+        })
+        .catch((error) => {
+          this.$log.error(error)
+          this.getFortunes()
+        })
+    },
+    onDeleteFortune (fortune) {
+      this.$log.debug('Calling Delete Fortune')
+      this.removeFortune(fortune.id)
     }
   },
   created () {
