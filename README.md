@@ -61,3 +61,4 @@ Inside the MyBot directory run this command in powershell
 $ bothub deploy
 ```
 Your bot should be running now
+![QR Code](./imgs/linebot-QR.png)
