@@ -20,7 +20,7 @@ logger.add("debug.log")
 
 # Helper class to convert DynamoDB item to JSON
 class DecimalEncoder(json.JSONEncoder):
-    def default(self, o):
+    def default(self, o): # pylint: disable=E0202
         if isinstance(o, decimal.Decimal):
             if abs(o) % 1 > 0:
                 return float(o)
@@ -42,7 +42,7 @@ def get_all_fortunes():
         items = response_obj['Items']
         return items
 
-def delete_fortune(id):
+def delete_fortune(fortune_id):
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
     table = dynamodb.Table('FortuneCookie')
@@ -50,7 +50,7 @@ def delete_fortune(id):
     try:
         response = table.delete_item(
             Key={
-                'id' : id
+                'id' : fortune_id
             }
         )
     except ClientError as e:
@@ -60,6 +60,7 @@ def delete_fortune(id):
             raise
     else:
         logger.debug("DeleteItem succeeded")
+        logger.debug(json.dumps(response, indent=4))
         logger.debug(json.dumps(get_all_fortunes(), indent=4))
 
 def createItem(fortune_item):
@@ -67,17 +68,67 @@ def createItem(fortune_item):
 
     table = dynamodb.Table('FortuneCookie')
 
-    id = str(uuid.uuid4())
-
     response = table.put_item(
         Item={
-            "id" : id,
+            "id" : str(uuid.uuid4()),
             "fortune": fortune_item['fortune'],
             "author": fortune_item['author'],
             "approved": False
         }
     )
     logger.debug("Item inserted to database.")
+    logger.debug(json.dumps(response, indent=4))
+    logger.debug(json.dumps(get_all_fortunes(), indent=4))
+
+def get_by_id(fortune_id):
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
+
+    table = dynamodb.Table('FortuneCookie')
+
+    try:
+        fortune = table.get_item(
+            Key={
+                "id" : fortune_id
+            }
+        )
+    except ClientError as e:
+        logger.debug(e.response['Error']['Message'])
+    else:
+        logger.debug("Get item by ID succeeded")
+        logger.debug(json.dumps(fortune, indent=4))
+        return fortune['Item']
+
+def update_fortune(fortune_id):
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
+
+    table = dynamodb.Table('FortuneCookie')
+
+    fortune = get_by_id(fortune_id)
+    
+    if fortune['approved'] == True :
+        response = table.update_item(
+            Key={
+                "id" : fortune_id
+            },
+            UpdateExpression="set approved = :a",
+            ExpressionAttributeValues={
+                ':a': False
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+    else:
+        response = table.update_item(
+            Key={
+                "id" : fortune_id
+            },
+            UpdateExpression="set approved = :a",
+            ExpressionAttributeValues={
+                ':a': True
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+    logger.debug("Approval changed")
+    logger.debug(json.dumps(response, indent=4))
     logger.debug(json.dumps(get_all_fortunes(), indent=4))
 
 @app.route("/")
@@ -86,7 +137,7 @@ def home():
 
 @app.route("/test")
 def test_endpoint():
-    
+    update_fortune("2805eed9-2f76-4657-8c1d-c010ecb40e8e")
     return "Test sent to debug log"
 
 @app.route("/fortune", methods=["GET"])
