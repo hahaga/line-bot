@@ -61,9 +61,8 @@ class Bot(BaseBot):
         """
         # Get request from fortune API will store here
         fortune = requests.get("http://api.open-notify.org/iss-now.json")
-        answer = fortune.text
-
         # Will print fortune when it is stored
+        answer = fortune.text
 
         reply = '@Fortune Bot fortune!'
         if event['content'] == reply:
