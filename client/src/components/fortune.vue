@@ -17,7 +17,7 @@
             <tr>
               <th scope="col">Fortune</th>
               <th scope="col">Author</th>
-              <th scope="col">Reviewed?</th>
+              <th scope="col">Approved?</th>
               <th></th>
             </tr>
           </thead>
@@ -30,7 +30,7 @@
                 <span v-else>No</span>
               </td>
               <td>
-                <button type="button" class="btn btn-info btn-sm" @click="editFortune(fortune)">Edit</button>
+                <button type="button" class="btn btn-info btn-sm" @click="approveFortune(fortune)">Approve</button>
                 <button type="button" class="btn btn-danger btn-sm">Delete</button>
               </td>
             </tr>
@@ -44,7 +44,7 @@
           <b-form-input
             id="form-title-edit-input"
             type="text"
-            v-model="editForm.title"
+            v-model="addFortuneForm.title"
             required
             placeholder="Enter Title"
           ></b-form-input>
@@ -57,17 +57,17 @@
           <b-form-input
             id="form-author-edit-input"
             type="text"
-            v-model="editForm.author"
+            v-model="addFortuneForm.author"
             required
             placeholder="Enter Author"
           ></b-form-input>
         </b-form-group>
-        <b-form-group id="form-read-edit-group">
-          <b-form-checkbox-group v-model="editForm.read" id="form-checks">
-            <b-form-checkbox value="true">Read?</b-form-checkbox>
+        <b-form-group id="form-approve-edit-group">
+          <b-form-checkbox-group v-model="addFortuneForm.approved" id="form-checks">
+            <b-form-checkbox value="false">Approved?</b-form-checkbox>
           </b-form-checkbox-group>
         </b-form-group>
-        <b-button type="submit" variant="primary">Update</b-button>
+        <b-button type="submit" variant="primary">Submit</b-button>
         <b-button type="reset" variant="danger">Cancel</b-button>
       </b-form>
     </b-modal>
@@ -82,43 +82,61 @@ export default {
   data () {
     return {
       fortunes: [],
-      editForm: {
+      addFortuneForm: {
         id: '',
         title: '',
         author: '',
-        read: []
+        approved: []
       }
     }
   },
   methods: {
     getFortunes () {
+      this.$log.debug('Getting Fortunes')
       const path = 'http://localhost:8081/fortune'
+      this.$log.debug('Getting Fortune from path: ', path)
+      this.$log.debug('Calling GET fortune/all')
       axios
         .get(path)
         .then(res => {
           this.fortunes = res.data.fortunes
+          this.$log.debug('Response Payload: ', res.data)
         })
         .catch(error => {
           console.log(error)
+          this.$log.error(error)
         })
     },
-    editFortune (fortune) {
-      this.editForm = fortune
+    addFortune (payload) {
+      this.$log.debug('Adding new fortune')
+      const path = 'http://localhost:8081/fortune'
+      this.$log.debug('Posting to: ', path)
+      this.$log.debug('Calling POST /fortune with payload: ', payload)
+      axios.post(path, payload)
+        .then(() => {
+          this.$log.debug('Updating fortunes')
+          this.getFortunes()
+        })
+        .catch((error) => {
+          this.$log.error(error)
+        })
+    },
+    approveFortune (fortune) {
+      this.addFortuneForm = fortune
     },
     initForm () {
+      this.$log.debug('Creating init form')
       this.addFortuneForm.title = ''
       this.addFortuneForm.author = ''
       this.addFortuneForm.read = []
     },
     onSubmit (evt) {
+      this.$log.debug('Submitting form')
       evt.preventDefault()
       this.$refs.addFortuneModal.hide()
-      let read = false
-      if (this.addFortuneForm.read[0]) read = true
       const payload = {
         title: this.addFortuneForm.title,
-        author: this.addFortuneForm.author,
-        read // property shorthand
+        author: this.addFortuneForm.author
       }
       this.addFortune(payload)
       this.initForm()
@@ -130,6 +148,7 @@ export default {
     }
   },
   created () {
+    this.$log.debug('Fortune Component Created')
     this.getFortunes()
   }
 }
