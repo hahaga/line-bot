@@ -19,7 +19,6 @@ logger.add("debug.log")
 
 
 # Helper class to convert DynamoDB item to JSON
-# cuz like fuck dealing with it when it's not JSON
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, decimal.Decimal):
@@ -29,60 +28,10 @@ class DecimalEncoder(json.JSONEncoder):
                 return int(o)
             return super(DecimalEncoder, self).default(o)
 
-def createItem():
-    # Connect to database
-    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
-
-    # Access database table
-    table = dynamodb.Table('FortuneCookie')
-
-    # Make JSON file of fortunes you want to add
-    # rawrawrawr stuff
-    id = str(uuid.uuid4())
-    # fortune = "If you eat food, it will give you calories."
-    # author = "Master Hong"
-
-    response = table.put_item(
-        Item={
-            'id' : id,
-            "fortune": "Your high-minded principles spell success.",
-            "author": "Random Fool",
-            "approved": True
-        }
-    )
-
-@app.route("/")
-def home():
-    return "Hello, World!"
-
-
-@app.route("/test")
-def test_endpoint():
-    delete_fortune('69930aa4-d002-4a30-9c17-f97c0206602c')
-    return "This is only a test"
-
-# Test fortunes
-FORTUNES = [
-    {
-        "id": 0,
-        "fortune": "A friend asks only for your time not your money.",
-        "author": "Random",
-        "approved": True,
-    },
-    {
-        "id": 1,
-        "fortune": "Your high-minded principles spell success.",
-        "author": "Random Fool",
-        "approved": False,
-    },
-]
-
-# Helper function
+# Helper functions
 def get_all_fortunes():
-    # connect to the database
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
-    # Access database table
     table = dynamodb.Table('FortuneCookie')
 
     try:
@@ -92,15 +41,10 @@ def get_all_fortunes():
     else:
         items = response_obj['Items']
         return items
-        # testing prints
-        #print("GetItem succeeded: ")
-        #print(json.dumps(item, indent=4, cls=DecimalEncoder))
 
 def delete_fortune(id):
-    # connect to the database
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
-    # Access database table
     table = dynamodb.Table('FortuneCookie')
 
     try:
@@ -115,33 +59,54 @@ def delete_fortune(id):
         else:
             raise
     else:
-        print("DeleteItem succeeded: ")
-        print(json.dumps(response, indent=4))
+        logger.debug("DeleteItem succeeded")
+        logger.debug(json.dumps(get_all_fortunes(), indent=4))
+
+def createItem(fortune_item):
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
+
+    table = dynamodb.Table('FortuneCookie')
+
+    id = str(uuid.uuid4())
+
+    response = table.put_item(
+        Item={
+            "id" : id,
+            "fortune": fortune_item['fortune'],
+            "author": fortune_item['author'],
+            "approved": False
+        }
+    )
+    logger.debug("Item inserted to database.")
+    logger.debug(json.dumps(get_all_fortunes(), indent=4))
+
+@app.route("/")
+def home():
+    return "Hello, World!"
+
+@app.route("/test")
+def test_endpoint():
     
+    return "Test sent to debug log"
+
 @app.route("/fortune", methods=["GET"])
 def get_fortune():
     fortunes = get_all_fortunes()
 
-    # Choose a random fortune
-    chosen = random.randint(0, len(fortunes)-1)
-    print(fortunes[chosen])
-    
     response_obj = {
-        "fortune" : fortunes[chosen],
+        "fortune" : random.choice(fortunes),
         "status": "success" 
     }
 
+    logger.debug("Random fortune: ")
     logger.debug(json.dumps(response_obj, indent=4))
     return jsonify(response_obj)
     
 @app.route("/fortune/all", methods=["GET"])
 def show_all():
     fortunes = get_all_fortunes()
+    logger.debug(json.dumps(fortunes, indent=4))
     return jsonify(fortunes)
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port='8081')
-
-    # testing the methods
-    # createItem()
-    # get_fortune()
