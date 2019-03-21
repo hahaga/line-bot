@@ -20,7 +20,7 @@ logger.add("debug.log")
 
 # Helper class to convert DynamoDB item to JSON
 class DecimalEncoder(json.JSONEncoder):
-    def default(self, o):
+    def default(self, o): # pylint: disable=E0202
         if isinstance(o, decimal.Decimal):
             if abs(o) % 1 > 0:
                 return float(o)
@@ -42,7 +42,7 @@ def get_all_fortunes():
         items = response_obj['Items']
         return items
 
-def delete_fortune(id):
+def delete_fortune(fortune_id):
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
     table = dynamodb.Table('FortuneCookie')
@@ -50,7 +50,7 @@ def delete_fortune(id):
     try:
         response = table.delete_item(
             Key={
-                'id' : id
+                'id' : fortune_id
             }
         )
     except ClientError as e:
@@ -60,6 +60,7 @@ def delete_fortune(id):
             raise
     else:
         logger.debug("DeleteItem succeeded")
+        logger.debug(json.dumps(response, indent=4))
         logger.debug(json.dumps(get_all_fortunes(), indent=4))
 
 def createItem(fortune_item):
@@ -67,18 +68,18 @@ def createItem(fortune_item):
 
     table = dynamodb.Table('FortuneCookie')
 
-    id = str(uuid.uuid4())
-
     response = table.put_item(
         Item={
-            "id" : id,
+            "id" : str(uuid.uuid4()),
             "fortune": fortune_item['fortune'],
             "author": fortune_item['author'],
             "approved": False
         }
     )
     logger.debug("Item inserted to database.")
+    logger.debug(json.dumps(response, indent=4))
     logger.debug(json.dumps(get_all_fortunes(), indent=4))
+
 
 @app.route("/")
 def home():
@@ -86,7 +87,6 @@ def home():
 
 @app.route("/test")
 def test_endpoint():
-    
     return "Test sent to debug log"
 
 @app.route("/fortune", methods=["GET"])
