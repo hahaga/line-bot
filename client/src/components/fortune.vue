@@ -30,7 +30,7 @@
                 <span v-else>No</span>
               </td>
               <td>
-                <button type="button" class="btn btn-info btn-sm" @click="approveFortune(fortune)">Approve</button>
+                <button type="button" class="btn btn-info btn-sm" @click="onApproveFortune(fortune)">Approve</button>
                 <button type="button" class="btn btn-danger btn-sm" @click="onDeleteFortune(fortune)">Delete</button>
               </td>
             </tr>
@@ -123,8 +123,23 @@ export default {
           this.$log.error(error)
         })
     },
-    approveFortune (fortune) {
-      this.addFortuneForm = fortune
+    onApproveFortune (fortune) {
+      this.$log.debug('Clicked Approved button')
+      this.approveFortune(fortune.id)
+    },
+    approveFortune (fortuneID) {
+      this.$log.debug('Approving fortune')
+      const path = `http://localhost:8081/fortune/${fortuneID}`
+      this.$log.debug('Posting to: ', path)
+      this.$log.debug('Calling PUT /fortune/{id}: ')
+      axios.put(path)
+        .then(() => {
+          this.$log.debug('Updating fortunes')
+          this.getFortunes()
+        })
+        .catch((error) => {
+          this.$log.error(error)
+        })
     },
     initForm () {
       this.$log.debug('Creating init form')
