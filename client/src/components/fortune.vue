@@ -1,41 +1,64 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-10">
-        <h1>
-            <img src="../assets/fortune-cookie.png" alt="fortune cookie" height="42" width="42">
-            Fortunes
-        </h1>
-        <hr><br><br>
-        <button type="button" class="btn btn-success btn-sm">Add Fortune</button>
-        <br><br>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Fortune</th>
-              <th scope="col">Author</th>
-              <th scope="col">Reviewed?</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(fortune, index) in fortunes" :key="index">
-              <td>{{fortune.fortune}}</td>
-              <td>{{fortune.author}}</td>
-              <td>
-                <span v-if="fortune.approved">Yes</span>
-                <span v-else>No</span>
-              </td>
-              <td>
-                <button type="button" class="btn btn-info btn-sm">Edit</button>
-                <button type="button" class="btn btn-danger btn-sm">Delete</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-10">
+          <h1>
+              <img src="../assets/fortune-cookie.png" alt="fortune cookie" height="42" width="42">
+              Fortunes
+          </h1>
+          <hr><br><br>
+          <button type="button" class="btn btn-success btn-sm" v-b-modal.fortune-modal>Add Fortune</button>
+          <br><br>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Fortune</th>
+                <th scope="col">Author</th>
+                <th scope="col">Reviewed?</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(fortune, index) in fortunes" :key="index">
+                <td>{{fortune.fortune}}</td>
+                <td>{{fortune.author}}</td>
+                <td>
+                  <span v-if="fortune.approved">Yes</span>
+                  <span v-else>No</span>
+                </td>
+                <td>
+                  <button type="button"
+                          class="btn btn-info btn-sm"
+                          @click="editFortune(fortune)">Edit</button>
+                  <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+      <b-modal ref="addFortuneModal"
+           id="fortune-modal"
+           title="Add a fortune"
+           hide-footer>
+    <b-form @submit="onSubmit" @reset="onReset" class="w-100">
+      <b-form-group id="form-title-edit-group" label='Title:' label-for="form-title-edit-input">
+        <b-form-input id="form-title-edit-input" type="text" v-model="editForm.title" required placeholder="Enter Title"></b-form-input>
+      </b-form-group>
+      <b-form-group id="form-author-edit-group" label='Author:' label-for="form-author-edit-input">
+        <b-form-input id="form-author-edit-input" type="text" v-model="editForm.author" required placeholder="Enter Author"></b-form-input>
+      </b-form-group>
+      <b-form-group id="form-read-edit-group">
+        <b-form-checkbox-group v-model="editForm.read" id="form-checks">
+          <b-form-checkbox value="true">Read?</b-form-checkbox>
+        </b-form-checkbox-group>
+      </b-form-group>
+      <b-button type="submit" variant="primary">Update</b-button>
+      <b-button type="reset" variant="danger">Cancel</b-button>
+    </b-form>
+  </b-modal>
   </div>
+
 </template>
 
 <script>
@@ -45,7 +68,13 @@ export default {
   name: 'Fortune',
   data () {
     return {
-      fortunes: []
+      fortunes: [],
+      editForm: {
+        id: '',
+        title: '',
+        author: '',
+        read: []
+      }
     }
   },
   methods: {
@@ -58,6 +87,32 @@ export default {
         .catch((error) => {
           console.log(error)
         })
+    },
+    editFortune (fortune) {
+      this.editForm = fortune
+    },
+    initForm () {
+      this.addFortuneForm.title = ''
+      this.addFortuneForm.author = ''
+      this.addFortuneForm.read = []
+    },
+    onSubmit (evt) {
+      evt.preventDefault()
+      this.$refs.addFortuneModal.hide()
+      let read = false
+      if (this.addFortuneForm.read[0]) read = true
+      const payload = {
+        title: this.addFortuneForm.title,
+        author: this.addFortuneForm.author,
+        read // property shorthand
+      }
+      this.addFortune(payload)
+      this.initForm()
+    },
+    onReset (evt) {
+      evt.preventDefault()
+      this.$refs.addFortuneModal.hide()
+      this.initForm()
     }
   },
   created () {
