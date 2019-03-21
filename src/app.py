@@ -98,46 +98,12 @@ def get_by_id(fortune_id):
         logger.debug(json.dumps(fortune, indent=4))
         return fortune['Item']
 
-def update_fortune(fortune_id):
-    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
-
-    table = dynamodb.Table('FortuneCookie')
-
-    fortune = get_by_id(fortune_id)
-    
-    if fortune['approved'] == True :
-        response = table.update_item(
-            Key={
-                "id" : fortune_id
-            },
-            UpdateExpression="set approved = :a",
-            ExpressionAttributeValues={
-                ':a': False
-            },
-            ReturnValues="UPDATED_NEW"
-        )
-    else:
-        response = table.update_item(
-            Key={
-                "id" : fortune_id
-            },
-            UpdateExpression="set approved = :a",
-            ExpressionAttributeValues={
-                ':a': True
-            },
-            ReturnValues="UPDATED_NEW"
-        )
-    logger.debug("Approval changed")
-    logger.debug(json.dumps(response, indent=4))
-    logger.debug(json.dumps(get_all_fortunes(), indent=4))
-
 @app.route("/")
 def home():
     return "Hello, World!"
 
 @app.route("/test")
 def test_endpoint():
-    update_fortune("2805eed9-2f76-4657-8c1d-c010ecb40e8e")
     return "Test sent to debug log"
 
 @app.route("/fortune", methods=["GET"])
