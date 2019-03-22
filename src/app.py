@@ -5,7 +5,7 @@ import uuid
 import random
 import sys
 from loguru import logger
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
@@ -106,8 +106,19 @@ def home():
 def test_endpoint():
     return "Test sent to debug log"
 
-@app.route("/fortune", methods=["GET"])
-def get_fortune():
+@app.route("/fortune/<_id>", methods=["PUT", "DELETE", "GET"])
+def handle_id(_id):
+    logger.debug(f"Calling handle_id on id: {_id}")
+    return jsonify({"id": _id})
+
+@app.route("/fortune", methods=["GET", "POST"])
+def get_fortune(): #rename
+    if request.method == "GET":
+        # do get stuff
+        pass
+    if request.method == "POST":
+        # do post stuff
+        pass
     fortunes = get_all_fortunes()
 
     response_obj = {
