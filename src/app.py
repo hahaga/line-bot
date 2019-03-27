@@ -164,15 +164,12 @@ def handle_id(_id):
 
     if request.method == "PUT":
         response_obj = update_fortune(_id)
-        pass
 
     if request.method == "DELETE":
         response_obj = delete_fortune(_id)
-        pass
 
     if request.method == "GET":
         response_obj = get_by_id(_id)
-        pass
 
     logger.debug(json.dumps(response_obj, indent=4))
     return jsonify(response_obj)
@@ -187,11 +184,9 @@ def fortune():
             "fortune" : random.choice(fortunes),
             "status": "success" 
         }
-        pass
 
     if request.method == "POST":
         response_obj = createItem(request.json)
-        pass
 
     logger.debug(json.dumps(response_obj, indent=4))
     return jsonify(response_obj)
