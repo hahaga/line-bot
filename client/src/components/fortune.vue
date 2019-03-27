@@ -95,13 +95,13 @@ export default {
   methods: {
     getFortunes () {
       this.$log.debug('Getting Fortunes')
-      const path = 'http://localhost:8081/fortune'
+      const path = 'http://localhost:8081/fortune/all'
       this.$log.debug('Getting Fortune from path: ', path)
       this.$log.debug('Calling GET fortune/all')
       axios
         .get(path)
         .then(res => {
-          this.fortunes = res.data.fortunes
+          this.fortunes = res.data
           this.$log.debug('Response Payload: ', res.data)
         })
         .catch(error => {
