@@ -7,11 +7,7 @@
           Fortunes
         </h1>
         <hr>
-        <br>
-        <br>
-        <button type="button" class="btn btn-success btn-sm" v-b-modal.fortune-modal>Add Fortune</button>
-        <br>
-        <br>
+        <button id="add-fortune-button" type="button" class="btn btn-success btn-sm" v-b-modal.fortune-modal>Add Fortune</button>
         <table class="table table-hover">
           <thead>
             <tr>
@@ -105,7 +101,6 @@ export default {
           this.$log.debug('Response Payload: ', res.data)
         })
         .catch(error => {
-          console.log(error)
           this.$log.error(error)
         })
     },
@@ -206,5 +201,8 @@ th:nth-child(4) {
 }
 th:nth-child(3) {
   width: 10%;
+}
+#add-fortune-button {
+  margin: 1em;
 }
 </style>
