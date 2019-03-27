@@ -90,10 +90,7 @@ export default {
   },
   methods: {
     getFortunes () {
-      this.$log.debug('Getting Fortunes')
       const path = 'http://localhost:8081/fortune/all'
-      this.$log.debug('Getting Fortune from path: ', path)
-      this.$log.debug('Calling GET fortune/all')
       axios
         .get(path)
         .then(res => {
@@ -101,49 +98,38 @@ export default {
           this.$log.debug('Response Payload: ', res.data)
         })
         .catch(error => {
-          this.$log.error(error)
+          this.$log.debug('In getFortunes(), path: ', path, '  error: ', error)
         })
     },
     addFortune (payload) {
-      this.$log.debug('Adding new fortune')
       const path = 'http://localhost:8081/fortune'
-      this.$log.debug('Posting to: ', path)
-      this.$log.debug('Calling POST /fortune with payload: ', payload)
       axios.post(path, payload)
         .then(() => {
-          this.$log.debug('Updating fortunes')
           this.getFortunes()
         })
         .catch((error) => {
-          this.$log.error(error)
+          this.$log.debug('In addFortune(), path: ', path, '  error: ', error)
         })
     },
     onApproveFortune (fortune) {
-      this.$log.debug('Clicked Approved button')
       this.approveFortune(fortune.id)
     },
     approveFortune (fortuneID) {
-      this.$log.debug('Approving fortune')
       const path = `http://localhost:8081/fortune/${fortuneID}`
-      this.$log.debug('Posting to: ', path)
-      this.$log.debug('Calling PUT /fortune/{id}: ')
       axios.put(path)
         .then(() => {
-          this.$log.debug('Updating fortunes')
           this.getFortunes()
         })
         .catch((error) => {
-          this.$log.error(error)
+          this.$log.debug('In approveFortune(), path: ', path, '  error: ', error)
         })
     },
     initForm () {
-      this.$log.debug('Creating init form')
       this.addFortuneForm.title = ''
       this.addFortuneForm.author = ''
       this.addFortuneForm.read = []
     },
     onSubmit (evt) {
-      this.$log.debug('Submitting Add Fortune form')
       evt.preventDefault()
       this.$refs.addFortuneModal.hide()
       const payload = {
@@ -159,30 +145,23 @@ export default {
       this.initForm()
     },
     removeFortune (fortuneID) {
-      this.$log.debug('Adding new fortune')
       const path = `http://localhost:8081/fortune/${fortuneID}`
-      this.$log.debug('Calling url: ', path)
-      this.$log.debug('Calling DELETE /fortune/{id}')
       axios.post(path)
         .then(() => {
-          this.$log.debug('Delete Fortune!')
           this.message = 'Fortune Removed!'
           this.showMessage = true
-          this.$log.debug('Updating fortunes')
           this.getFortunes()
         })
         .catch((error) => {
-          this.$log.error(error)
+          this.$log.debug('In removeFortune(), path: ', path, '  error: ', error)
           this.getFortunes()
         })
     },
     onDeleteFortune (fortune) {
-      this.$log.debug('Calling Delete Fortune')
       this.removeFortune(fortune.id)
     }
   },
   created () {
-    this.$log.debug('Fortune Component Created')
     this.getFortunes()
   }
 }
