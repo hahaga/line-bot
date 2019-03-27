@@ -5,7 +5,7 @@ import uuid
 import random
 import sys
 from loguru import logger
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
@@ -30,6 +30,10 @@ class DecimalEncoder(json.JSONEncoder):
 
 # Helper functions
 def get_all_fortunes():
+    """
+        Returns all fortunes
+    """
+
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
     table = dynamodb.Table('FortuneCookie')
@@ -43,6 +47,9 @@ def get_all_fortunes():
         return items
 
 def delete_fortune(fortune_id):
+    """
+        Deletes a fortune from the database given an id
+    """
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
     table = dynamodb.Table('FortuneCookie')
@@ -62,8 +69,13 @@ def delete_fortune(fortune_id):
         logger.debug("DeleteItem succeeded")
         logger.debug(json.dumps(response, indent=4))
         logger.debug(json.dumps(get_all_fortunes(), indent=4))
+        return response
 
 def createItem(fortune_item):
+    """
+        Adds a fortune to the database given the fortune and author
+    """
+    
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
     table = dynamodb.Table('FortuneCookie')
@@ -77,9 +89,65 @@ def createItem(fortune_item):
         }
     )
     logger.debug("Item inserted to database.")
-    logger.debug(json.dumps(response, indent=4))
-    logger.debug(json.dumps(get_all_fortunes(), indent=4))
+    return response
 
+def get_by_id(fortune_id):
+    """
+        Returns a fortune given an id
+    """
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
+
+    table = dynamodb.Table('FortuneCookie')
+
+    try:
+        fortune = table.get_item(
+            Key={
+                "id" : fortune_id
+            }
+        )
+    except ClientError as e:
+        logger.debug(e.response['Error']['Message'])
+    else:
+        logger.debug("Get item by ID succeeded")
+        logger.debug(json.dumps(fortune, indent=4))
+        return fortune['Item']
+
+def update_fortune(fortune_id):
+    """
+        Toggles the approved item of a fortune given the fortune id
+    """
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
+
+    table = dynamodb.Table('FortuneCookie')
+
+    fortune = get_by_id(fortune_id)
+
+    logger.debug(f"Approved: {fortune['approved']}")
+    if fortune['approved'] == True:
+        response = table.update_item(
+            Key={
+                "id" : fortune_id
+            },
+            UpdateExpression="set approved = :a",
+            ExpressionAttributeValues={
+                 ':a': False
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+    else:
+        response = table.update_item(
+            Key={
+                "id" : fortune_id
+            },
+            UpdateExpression="set approved = :a",
+            ExpressionAttributeValues={
+                ':a': True
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+    logger.debug("Update succeeded")
+    logger.debug(json.dumps(get_all_fortunes(), indent=4))
+    return response
 
 @app.route("/")
 def home():
@@ -89,21 +157,42 @@ def home():
 def test_endpoint():
     return "Test sent to debug log"
 
-@app.route("/fortune", methods=["GET"])
-def get_fortune():
-    fortunes = get_all_fortunes()
+@app.route("/fortune/<_id>", methods=["PUT", "DELETE", "GET"])
+def handle_id(_id):
+    logger.debug(f"Calling handle_id on id: {_id}")
+    response_obj = "Error"
 
-    response_obj = {
-        "fortune" : random.choice(fortunes),
-        "status": "success" 
-    }
+    if request.method == "PUT":
+        response_obj = update_fortune(_id)
 
-    logger.debug("Random fortune: ")
+    if request.method == "DELETE":
+        response_obj = delete_fortune(_id)
+
+    if request.method == "GET":
+        response_obj = get_by_id(_id)
+
+    logger.debug(json.dumps(response_obj, indent=4))
+    return jsonify(response_obj)
+
+@app.route("/fortune", methods=["GET", "POST"])
+def fortune(): 
+    response_obj = "Error"
+
+    if request.method == "GET":
+        fortunes = get_all_fortunes()
+        response_obj = {
+            "fortune" : random.choice(fortunes),
+            "status": "success" 
+        }
+
+    if request.method == "POST":
+        response_obj = createItem(request.json)
+
     logger.debug(json.dumps(response_obj, indent=4))
     return jsonify(response_obj)
     
 @app.route("/fortune/all", methods=["GET"])
-def show_all():
+def fortune_all():
     fortunes = get_all_fortunes()
     logger.debug(json.dumps(fortunes, indent=4))
     return jsonify(fortunes)
