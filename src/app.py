@@ -30,6 +30,10 @@ class DecimalEncoder(json.JSONEncoder):
 
 # Helper functions
 def get_all_fortunes():
+    """
+        Returns all fortunes
+    """
+
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
     table = dynamodb.Table('FortuneCookie')
@@ -43,6 +47,9 @@ def get_all_fortunes():
         return items
 
 def delete_fortune(fortune_id):
+    """
+        Deletes a fortune from the database given an id
+    """
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
     table = dynamodb.Table('FortuneCookie')
@@ -66,7 +73,7 @@ def delete_fortune(fortune_id):
 
 def createItem(fortune_item):
     """
-
+        Adds a fortune to the database given the fortune and author
     """
     
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
@@ -85,6 +92,9 @@ def createItem(fortune_item):
     return response
 
 def get_by_id(fortune_id):
+    """
+        Returns a fortune given an id
+    """
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
     table = dynamodb.Table('FortuneCookie')
@@ -103,6 +113,9 @@ def get_by_id(fortune_id):
         return fortune['Item']
 
 def update_fortune(fortune_id):
+    """
+        Toggles the approved item of a fortune given the fortune id
+    """
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
     table = dynamodb.Table('FortuneCookie')
