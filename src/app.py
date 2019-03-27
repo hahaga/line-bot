@@ -62,8 +62,13 @@ def delete_fortune(fortune_id):
         logger.debug("DeleteItem succeeded")
         logger.debug(json.dumps(response, indent=4))
         logger.debug(json.dumps(get_all_fortunes(), indent=4))
+        return response
 
 def createItem(fortune_item):
+    """
+
+    """
+    
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
     table = dynamodb.Table('FortuneCookie')
@@ -77,8 +82,7 @@ def createItem(fortune_item):
         }
     )
     logger.debug("Item inserted to database.")
-    logger.debug(json.dumps(response, indent=4))
-    logger.debug(json.dumps(get_all_fortunes(), indent=4))
+    return response
 
 def get_by_id(fortune_id):
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
@@ -98,6 +102,40 @@ def get_by_id(fortune_id):
         logger.debug(json.dumps(fortune, indent=4))
         return fortune['Item']
 
+def update_fortune(fortune_id):
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
+
+    table = dynamodb.Table('FortuneCookie')
+
+    fortune = get_by_id(fortune_id)
+
+    logger.debug(f"Approved: {fortune['approved']}")
+    if fortune['approved'] == True:
+        response = table.update_item(
+            Key={
+                "id" : fortune_id
+            },
+            UpdateExpression="set approved = :a",
+            ExpressionAttributeValues={
+                 ':a': False
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+    else:
+        response = table.update_item(
+            Key={
+                "id" : fortune_id
+            },
+            UpdateExpression="set approved = :a",
+            ExpressionAttributeValues={
+                ':a': True
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+    logger.debug("Update succeeded")
+    logger.debug(json.dumps(get_all_fortunes(), indent=4))
+    return response
+
 @app.route("/")
 def home():
     return "Hello, World!"
@@ -109,29 +147,44 @@ def test_endpoint():
 @app.route("/fortune/<_id>", methods=["PUT", "DELETE", "GET"])
 def handle_id(_id):
     logger.debug(f"Calling handle_id on id: {_id}")
-    return jsonify({"id": _id})
+    response_obj = "Error"
+
+    if request.method == "PUT":
+        response_obj = update_fortune(_id)
+        pass
+
+    if request.method == "DELETE":
+        response_obj = delete_fortune(_id)
+        pass
+
+    if request.method == "GET":
+        response_obj = get_by_id(_id)
+        pass
+
+    logger.debug(json.dumps(response_obj, indent=4))
+    return jsonify(response_obj)
 
 @app.route("/fortune", methods=["GET", "POST"])
-def get_fortune(): #rename
+def fortune(): 
+    response_obj = "Error"
+
     if request.method == "GET":
-        # do get stuff
+        fortunes = get_all_fortunes()
+        response_obj = {
+            "fortune" : random.choice(fortunes),
+            "status": "success" 
+        }
         pass
+
     if request.method == "POST":
-        # do post stuff
+        response_obj = createItem(request.json)
         pass
-    fortunes = get_all_fortunes()
 
-    response_obj = {
-        "fortune" : random.choice(fortunes),
-        "status": "success" 
-    }
-
-    logger.debug("Random fortune: ")
     logger.debug(json.dumps(response_obj, indent=4))
     return jsonify(response_obj)
     
 @app.route("/fortune/all", methods=["GET"])
-def show_all():
+def fortune_all():
     fortunes = get_all_fortunes()
     logger.debug(json.dumps(fortunes, indent=4))
     return jsonify(fortunes)
