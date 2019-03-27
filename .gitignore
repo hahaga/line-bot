@@ -8,3 +8,4 @@ public/
 src/_drafts
 package-lock.json
 .vscode/*
+debug.log
