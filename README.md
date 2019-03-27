@@ -40,6 +40,7 @@ $ npm run dev
 
 Now visit the page `http://localhost:8080/`
 
+<<<<<<< HEAD
 # pip Requirements
 
 - `bothub-cli`
@@ -62,3 +63,27 @@ after changing things on the bot, update with:
 ```
 bothub deploy
 ```
+=======
+# How to run deploy through bothub
+
+Bothub, a chatbot hosting service for developers
+
+Create a [bothub](https://bothub.studio/) account
+
+First install bothub-cli
+```
+$ pip install bothub-cli
+```
+Then you'll need to assign these values
+```
+$ bothub channel add line --channel-id=<channel id> \
+                        --channel-secret=<channel secret> \
+                       --channel-access-token=<channel access token>
+```
+Inside the MyBot directory run this command in powershell
+```
+$ bothub deploy
+```
+Your bot should be running now
+![QR Code](./imgs/linebot-QR.png)
+>>>>>>> readme-bothub-update
