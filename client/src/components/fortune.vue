@@ -36,13 +36,13 @@
     </div>
     <b-modal ref="addFortuneModal" id="fortune-modal" title="Add a fortune" hide-footer>
       <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-        <b-form-group id="form-title-edit-group" label="Title:" label-for="form-title-edit-input">
+        <b-form-group id="form-fortune-edit-group" label="Fortune:" label-for="form-fortune-edit-input">
           <b-form-input
-            id="form-title-edit-input"
+            id="form-fortune-edit-input"
             type="text"
-            v-model="addFortuneForm.title"
+            v-model="addFortuneForm.fortune"
             required
-            placeholder="Enter Title"
+            placeholder="Enter Fortune"
           ></b-form-input>
         </b-form-group>
         <b-form-group
@@ -80,7 +80,7 @@ export default {
       fortunes: [],
       addFortuneForm: {
         id: '',
-        title: '',
+        fortune: '',
         author: '',
         approved: []
       },
@@ -109,6 +109,7 @@ export default {
         })
         .catch((error) => {
           this.$log.debug('In addFortune(), path: ', path, '  error: ', error)
+          this.$log.debug('Payload was: ', payload)
         })
     },
     onApproveFortune (fortune) {
@@ -125,7 +126,7 @@ export default {
         })
     },
     initForm () {
-      this.addFortuneForm.title = ''
+      this.addFortuneForm.fortune = ''
       this.addFortuneForm.author = ''
       this.addFortuneForm.read = []
     },
@@ -133,7 +134,7 @@ export default {
       evt.preventDefault()
       this.$refs.addFortuneModal.hide()
       const payload = {
-        title: this.addFortuneForm.title,
+        fortune: this.addFortuneForm.fortune,
         author: this.addFortuneForm.author
       }
       this.addFortune(payload)
