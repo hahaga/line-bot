@@ -147,7 +147,7 @@ export default {
     },
     removeFortune (fortuneID) {
       const path = `http://localhost:8081/fortune/${fortuneID}`
-      axios.post(path)
+      axios.delete(path)
         .then(() => {
           this.message = 'Fortune Removed!'
           this.showMessage = true
