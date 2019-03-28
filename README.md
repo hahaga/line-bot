@@ -56,7 +56,7 @@ Be sure to get the needed credentials(config.yml) and put it in the .bothub fold
 ```
 mkdir ~/.bothub
 ```
-Navigate to the MyBot directory
+Open the project folder and navigate to the MyBot directory
 ```
 cd MyBot
 ```
