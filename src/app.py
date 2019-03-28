@@ -15,8 +15,6 @@ app.config.from_object(__name__)
 
 CORS(app)
 logger.add(sys.stderr, format="{time} {level} {message}", filter="my_module", level="INFO")
-logger.add("debug.log")
-
 
 # Helper class to convert DynamoDB item to JSON
 class DecimalEncoder(json.JSONEncoder):
@@ -151,7 +149,7 @@ def update_fortune(fortune_id):
 
 @app.route("/")
 def home():
-    return "Hello, World!"
+    return "Hello, World!", 200
 
 @app.route("/test")
 def test_endpoint():
