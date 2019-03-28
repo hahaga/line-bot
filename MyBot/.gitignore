@@ -131,8 +131,5 @@ tags
 # Persistent undo
 [._]*.un~
 
-# Bothub
-.bothub-meta
-
 .DS_Store
 .vscode
