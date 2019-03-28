@@ -90,7 +90,7 @@ export default {
   },
   methods: {
     getFortunes () {
-      const path = 'https://uz1hyfe7ah.execute-api.us-west-2.amazonaws.com/dev:8081/fortune/all'
+      const path = 'https://uz1hyfe7ah.execute-api.us-west-2.amazonaws.com/dev/fortune/all'
       axios
         .get(path)
         .then(res => {
@@ -102,7 +102,7 @@ export default {
         })
     },
     addFortune (payload) {
-      const path = 'https://uz1hyfe7ah.execute-api.us-west-2.amazonaws.com/dev:8081/fortune'
+      const path = 'https://uz1hyfe7ah.execute-api.us-west-2.amazonaws.com/dev/fortune'
       axios.post(path, payload)
         .then(() => {
           this.getFortunes()
@@ -116,7 +116,7 @@ export default {
       this.approveFortune(fortune.id)
     },
     approveFortune (fortuneID) {
-      const path = `https://uz1hyfe7ah.execute-api.us-west-2.amazonaws.com/dev:8081/fortune/${fortuneID}`
+      const path = `https://uz1hyfe7ah.execute-api.us-west-2.amazonaws.com/dev/fortune/${fortuneID}`
       axios.put(path)
         .then(() => {
           this.getFortunes()
@@ -146,7 +146,7 @@ export default {
       this.initForm()
     },
     removeFortune (fortuneID) {
-      const path = `https://uz1hyfe7ah.execute-api.us-west-2.amazonaws.com/dev:8081/fortune/${fortuneID}`
+      const path = `https://uz1hyfe7ah.execute-api.us-west-2.amazonaws.com/dev/fortune/${fortuneID}`
       axios.delete(path)
         .then(() => {
           this.message = 'Fortune Removed!'
