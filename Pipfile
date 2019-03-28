@@ -11,6 +11,7 @@ flask = "*"
 flask-cors = "*"
 bothub-cli = "*"
 loguru = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.6"
