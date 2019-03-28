@@ -50,12 +50,6 @@ Be sure to get the needed credentials and  put it in the .bothub folder
 ```
 mkdir ~/.bothub
 ```
-Then you'll need to assign these values
-```
-$ bothub channel add line --channel-id=<channel id> \
-                        --channel-secret=<channel secret> \
-                       --channel-access-token=<channel access token>
-```
 Navigate to the MyBot directory
 ```
 cd MyBot
