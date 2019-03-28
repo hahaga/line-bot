@@ -46,7 +46,8 @@ First install bothub-cli
 ```
 $ pip install bothub-cli
 ```
-Be sure to get the needed credentials and  put it in the .bothub folder
+Create the .bothub folder in C:\Users\User\
+Be sure to get the needed credentials(config.yml) and put it in the .bothub folder
 ```
 mkdir ~/.bothub
 ```
