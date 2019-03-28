@@ -9,11 +9,8 @@ pylint = "*"
 [packages]
 flask = "*"
 flask-cors = "*"
-<<<<<<< HEAD
 bothub-cli = "*"
-=======
 loguru = "*"
->>>>>>> master
 
 [requires]
 python_version = "3.6"

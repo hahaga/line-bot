@@ -48,8 +48,7 @@ $ pip install bothub-cli
 ```
 Be sure to get the needed credentials and  put it in the .bothub folder
 ```
-mkdir .bothub
-cd C:\Users\User\.bothub
+mkdir ~/.bothub
 ```
 Then you'll need to assign these values
 ```
