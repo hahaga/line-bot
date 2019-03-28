@@ -5,10 +5,26 @@ import Vue from 'vue'
 import App from './App'
 import BootstrapVue from 'bootstrap-vue'
 import router from './router'
-
-Vue.config.productionTip = false
+import VueLogger from 'vuejs-logger'
 
 Vue.use(BootstrapVue)
+const isProduction = process.env.NODE_ENV === 'production'
+
+console.log('isProduction: ' + isProduction)
+
+const options = {
+  isEnabled: true,
+  logLevel: isProduction ? 'error' : 'debug',
+  stringifyArguments: false,
+  showLogLevel: true,
+  showMethodName: true,
+  separator: '|',
+  showConsoleColors: true
+}
+
+Vue.use(VueLogger, options)
+
+Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
