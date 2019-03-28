@@ -45,6 +45,29 @@ $ npm run dev
 
 Now visit the page `http://localhost:8080/`
 
+# How to run deploy through bothub
+
+First install bothub-cli
+```
+$ pip install bothub-cli
+```
+Create the .bothub folder in C:\Users\User\
+Be sure to get the needed credentials(config.yml) and put it in the .bothub folder
+```
+mkdir ~/.bothub
+```
+Open the project folder and navigate to the MyBot directory
+```
+cd MyBot
+```
+
+```
+$ bothub deploy
+```
+Successfully deploying will allow you to add the bot by scanning this QR code
+
+Message your new friend, "@Fortune Bot fortune!" to test it out
+![QR Code](./imgs/linebot-QR.png)
 # Zappa
 
 ## How to deploy using Zappa

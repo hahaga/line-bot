@@ -9,6 +9,7 @@ pylint = "*"
 [packages]
 flask = "*"
 flask-cors = "*"
+bothub-cli = "*"
 loguru = "*"
 pylint = "*"
 
