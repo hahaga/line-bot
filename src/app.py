@@ -149,7 +149,7 @@ def update_fortune(fortune_id):
 
 @app.route("/")
 def home():
-    return "Hello, World!"
+    return "Hello, World!", 200
 
 @app.route("/test")
 def test_endpoint():
