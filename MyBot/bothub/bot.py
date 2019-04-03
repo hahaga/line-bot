@@ -60,13 +60,17 @@ class Bot(BaseBot):
         """
         TO-DO: Connect to Fortune API and return fortune
         """
+        self.send_message('Hello, getting me to work?')
         # Get request from fortune API will store here
         # fortune = requests.get("http://api.open-notify.org/iss-now.json")
-        fortune = requests.get("https://uz1hyfe7ah.execute-api.us-west-2.amazonaws.com/dev/fortune/all")
+        fortune = requests.get("https://uz1hyfe7ah.execute-api.us-west-2.amazonaws.com/dev/fortune")
         # Will print fortune when it is stored
-        answer = json.dumps(fortune)
+        answer = fortune.text
+        data = json.load(answer)
 
 
         reply = '@Fortune Bot fortune!'
         if event['content'] == reply:
-          self.send_message(answer)
+          self.send_message(data["fortune"]["fortune"])
+        else :
+          self.send_message('help')
