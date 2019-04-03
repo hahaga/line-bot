@@ -5,6 +5,7 @@ from __future__ import (absolute_import, division, print_function, unicode_liter
 from bothub_client.bot import BaseBot
 from bothub_client.decorators import channel
 import requests
+import json
 
 class Bot(BaseBot):
     """Represent a Bot logic which interacts with a user.
@@ -60,9 +61,11 @@ class Bot(BaseBot):
         TO-DO: Connect to Fortune API and return fortune
         """
         # Get request from fortune API will store here
-        fortune = requests.get("http://api.open-notify.org/iss-now.json")
+        # fortune = requests.get("http://api.open-notify.org/iss-now.json")
+        fortune = requests.get("https://uz1hyfe7ah.execute-api.us-west-2.amazonaws.com/dev/fortune/all")
         # Will print fortune when it is stored
-        answer = fortune.text
+        answer = json.dumps(fortune)
+
 
         reply = '@Fortune Bot fortune!'
         if event['content'] == reply:
