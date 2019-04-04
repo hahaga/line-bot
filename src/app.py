@@ -72,6 +72,11 @@ def delete_fortune(fortune_id):
 def createItem(fortune_item):
     """
         Adds a fortune to the database given the fortune and author
+
+        Parameter: fortune = {
+            'fortune' : 'theFortune',
+            'author' : 'theAuthor'
+        }
     """
     
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
