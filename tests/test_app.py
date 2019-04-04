@@ -1,8 +1,17 @@
 import pytest
 import boto3
 import uuid
+import json
 from moto import mock_dynamodb2
 from src import app
+
+app.app.config['TESTING'] = True
+
+@pytest.fixture
+def app_client():
+    client = app.app.test_client()
+    yield client
+
 
 def test_foo():
     assert 1 == 1
@@ -114,3 +123,14 @@ def test_update_fortune(empty_dynamo):
     response = app.update_fortune(items['id']) #checks for toggle
 
     assert False == response['Attributes']['approved']
+
+def test_get_request(empty_dynamo, app_client):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('FortuneCookie')
+
+    response_obj = table.scan()
+    item = response_obj['Items'][0]
+
+    response_obj = app_client.get("/fortune/{}".format(item['id']))
+    data = json.loads(response_obj.data)
+    assert item == data
