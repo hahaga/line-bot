@@ -1,0 +1,112 @@
+swagger: '2.0'
+info:
+  description: |
+    This is the first API by the hahaga group to tell your fortune!
+  version: 1.0.0
+  title: Fortune
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+# host: petstore.swagger.io
+# basePath: /v2
+tags:
+- name: fortune
+  description: Fortune for the day!
+# schemes:
+# - http
+paths:
+  /fortune:
+    get:
+      tags:
+      - fortune
+      summary: Returns a random fortune
+      produces:
+      - application/json
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Fortune'
+    post:
+      tags:
+      - fortune
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/FortunePost'
+      summary: Uploads a fortune to the database
+      responses:
+        200:
+          description: Successully Added Fortune
+  /fortune/all:
+    get:
+      tags:
+      - fortune
+      summary: Returns all fortunes in the database
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/FortuneList'
+  /fortune/{_id}:
+    put:
+      tags:
+      - fortune
+      parameters:
+      - name: _id
+        in: path
+        description: UUID of fortune
+        required: true
+        type: integer
+        format: int64
+      summary: Updates the approval status of a specific fortune
+      responses:
+        200:
+          description: Successfully toggled approval status
+    delete:
+      tags:
+      - fortune
+      parameters:
+      - name: _id
+        in: path
+        description: UUID of fortune
+        required: true
+        type: integer
+        format: int64
+      summary: Deletes a specific fortune
+      responses:
+        200:
+          description: successfully deleted from database
+definitions:
+  FortuneList:
+    type: array
+    items:
+      $ref: '#/definitions/Fortune'
+  Fortune:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      approved:
+        type: string
+      author:
+        type: string
+      fortune:
+        type: string
+  FortunePost:
+    type: object
+    properties:
+      author:
+        type: string
+      fortune:
+        type: string
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+# Added by API Auto Mocking Plugin
+host: uz1hyfe7ah.execute-api.us-west-2.amazonaws.com
+basePath: /dev
+schemes:
+ - https

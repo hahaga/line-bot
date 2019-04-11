@@ -3,9 +3,9 @@
 
 ![web front end](./imgs/webapp.png)
 
-## Instructions to get started:
+# Docs
 
-To get the project running, you will need to install these dependencies:
+We have [Swagger docs!](https://app.swaggerhub.com/apis/penguindustin/fortune/1.0.0)
 
 # Requirements
 
