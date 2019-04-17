@@ -10,7 +10,7 @@ from flask_cors import CORS
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 
-app = Flask(__name__)
+app = Flask(__name__) # Flask object called app 
 app.config.from_object(__name__)
 
 CORS(app)
@@ -39,7 +39,7 @@ def get_all_fortunes():
     try:
         response_obj = table.scan()
     except ClientError as e:
-        print(e.response['Error']['Message'])
+        logger.debug(e.response['Error']['Message'])
     else:
         items = response_obj['Items']
         return items
@@ -72,6 +72,11 @@ def delete_fortune(fortune_id):
 def createItem(fortune_item):
     """
         Adds a fortune to the database given the fortune and author
+
+        Parameter: fortune = {
+            'fortune' : 'theFortune',
+            'author' : 'theAuthor'
+        }
     """
     
     dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
