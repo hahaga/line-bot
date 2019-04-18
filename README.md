@@ -1,4 +1,3 @@
-[![CircleCI](https://circleci.com/gh/hahaga/line-bot/tree/master.svg?style=svg)](https://circleci.com/gh/hahaga/line-bot/tree/master)
 # Linebot
 
 ![web front end](./fortune_app.gif)
